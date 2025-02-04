@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Clock, Users } from "lucide-react";
+import { MapPin, Clock, Users, ArrowRight } from "lucide-react";
 
 interface RideCardProps {
   departureTime: string;
