@@ -1,28 +1,7 @@
 import { useParams } from "react-router-dom";
 import { RideCard } from "@/components/RideCard";
 import { AddRideButton } from "@/components/AddRideButton";
-
-// Mock data for initial display
-const MOCK_RIDES = [
-  {
-    id: 1,
-    departureTime: "Today at 2:30 PM",
-    startLocation: "Middlebury Campus",
-    endLocation: "Burlington Airport",
-    availableSeats: 3,
-    womenOnly: false,
-    direction: "leaving"
-  },
-  {
-    id: 2,
-    departureTime: "Tomorrow at 9:00 AM",
-    startLocation: "Albany Airport",
-    endLocation: "Middlebury Campus",
-    availableSeats: 2,
-    womenOnly: true,
-    direction: "arriving"
-  }
-];
+import { MOCK_RIDES } from "@/lib/mock-data";
 
 export default function RideListings() {
   const { direction } = useParams();

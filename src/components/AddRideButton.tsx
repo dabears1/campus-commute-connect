@@ -1,18 +1,18 @@
-import { Plus } from "lucide-react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
+import { Plus } from "lucide-react";
+import { AddRideForm } from "./AddRideForm";
 
 export function AddRideButton() {
-  const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
 
   return (
-    <Button 
-      onClick={() => navigate("/rides/new")}
-      size="lg"
-      className="gap-2"
-    >
-      <Plus className="w-5 h-5" />
-      Add New Ride
-    </Button>
+    <>
+      <Button onClick={() => setOpen(true)} size="sm">
+        <Plus className="w-4 h-4 mr-2" />
+        Add New Ride
+      </Button>
+      <AddRideForm open={open} onOpenChange={setOpen} />
+    </>
   );
 }
