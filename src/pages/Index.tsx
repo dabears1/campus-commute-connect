@@ -1,14 +1,23 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { DirectionCard } from "@/components/DirectionCard";
 
-const Index = () => {
+export default function Index() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 gap-8">
+      <div className="text-center space-y-4 mb-8">
+        <h1 className="text-4xl font-bold text-primary">MiddRideBoard</h1>
+        <p className="text-lg text-muted-foreground">Find or offer rides to and from campus</p>
+      </div>
+      
+      <div className="w-full max-w-md space-y-4">
+        <DirectionCard
+          title="Leaving Campus"
+          direction="leaving"
+        />
+        <DirectionCard
+          title="Getting to Campus"
+          direction="arriving"
+        />
       </div>
     </div>
   );
-};
-
-export default Index;
+}
