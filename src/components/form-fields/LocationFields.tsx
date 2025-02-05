@@ -1,3 +1,4 @@
+
 import { useParams } from "react-router-dom";
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -94,7 +95,25 @@ export function LocationFields({ form }: LocationFieldsProps) {
           <FormItem>
             <FormLabel>End Location</FormLabel>
             <FormControl>
-              <Input {...field} />
+              {direction === "to" ? (
+                <Select 
+                  onValueChange={field.onChange} 
+                  defaultValue={field.value}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a destination on campus" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {CAMPUS_LOCATIONS.map((location) => (
+                      <SelectItem key={location} value={location}>
+                        {location}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              ) : (
+                <Input {...field} />
+              )}
             </FormControl>
             <FormMessage />
           </FormItem>
