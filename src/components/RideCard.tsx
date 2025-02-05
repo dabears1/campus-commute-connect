@@ -84,7 +84,7 @@ export function RideCard({
           {showPhoneNumber && phoneNumber && (
             <div className="flex items-center gap-2 text-green-600">
               <Phone className="w-4 h-4" />
-              <span>{phoneNumber}</span>
+              <span>{phoneNumber} (Send your driver a text message)</span>
             </div>
           )}
         </div>
