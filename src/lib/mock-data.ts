@@ -1,3 +1,4 @@
+
 export interface Ride {
   id: number;
   departureTime: string;
@@ -6,6 +7,7 @@ export interface Ride {
   availableSeats: number;
   womenOnly: boolean;
   direction: string;
+  phoneNumber?: string;
 }
 
 export const MOCK_RIDES: Ride[] = [
@@ -16,7 +18,8 @@ export const MOCK_RIDES: Ride[] = [
     endLocation: "Burlington Airport",
     availableSeats: 3,
     womenOnly: false,
-    direction: "leaving"
+    direction: "leaving",
+    phoneNumber: "802-555-0123"
   },
   {
     id: 2,
@@ -25,6 +28,7 @@ export const MOCK_RIDES: Ride[] = [
     endLocation: "Middlebury Campus",
     availableSeats: 2,
     womenOnly: true,
-    direction: "arriving"
+    direction: "arriving",
+    phoneNumber: "802-555-0456"
   }
 ];
