@@ -1,3 +1,4 @@
+
 import { useParams, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -7,6 +8,7 @@ import { MOCK_RIDES } from "@/lib/mock-data";
 import { DepartureTimeField } from "./form-fields/DepartureTimeField";
 import { LocationFields } from "./form-fields/LocationFields";
 import { RideDetailsFields } from "./form-fields/RideDetailsFields";
+import { PhoneNumberField } from "./form-fields/PhoneNumberField";
 
 interface AddRideFormProps {
   open: boolean;
@@ -19,6 +21,7 @@ export interface FormData {
   endLocation: string;
   availableSeats: number;
   womenOnly: boolean;
+  phoneNumber: string;
 }
 
 export function AddRideForm({ open, onOpenChange }: AddRideFormProps) {
@@ -31,6 +34,7 @@ export function AddRideForm({ open, onOpenChange }: AddRideFormProps) {
       endLocation: "",
       availableSeats: 1,
       womenOnly: false,
+      phoneNumber: "",
     },
   });
 
@@ -58,6 +62,7 @@ export function AddRideForm({ open, onOpenChange }: AddRideFormProps) {
             <DepartureTimeField form={form} />
             <LocationFields form={form} />
             <RideDetailsFields form={form} />
+            <PhoneNumberField form={form} />
             <Button type="submit" className="w-full">Add Ride</Button>
           </form>
         </Form>

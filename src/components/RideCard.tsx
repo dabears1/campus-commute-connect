@@ -1,7 +1,8 @@
+
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Clock, Users, ArrowRight } from "lucide-react";
+import { MapPin, Clock, Users, ArrowRight, Phone } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,6 +22,7 @@ interface RideCardProps {
   endLocation: string;
   availableSeats: number;
   womenOnly: boolean;
+  phoneNumber: string;
   onSeatClaim: (rideId: number) => void;
 }
 
@@ -31,13 +33,16 @@ export function RideCard({
   endLocation,
   availableSeats,
   womenOnly,
+  phoneNumber,
   onSeatClaim,
 }: RideCardProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [showPhoneNumber, setShowPhoneNumber] = useState(false);
   const { toast } = useToast();
 
   const handleClaimSeat = () => {
     onSeatClaim(id);
+    setShowPhoneNumber(true);
     setIsDialogOpen(false);
     toast({
       title: "Seat claimed successfully",
@@ -75,6 +80,13 @@ export function RideCard({
             <Users className="w-4 h-4 text-muted-foreground" />
             <span>{availableSeats} seats available</span>
           </div>
+
+          {showPhoneNumber && (
+            <div className="flex items-center gap-2 text-green-600">
+              <Phone className="w-4 h-4" />
+              <span>{phoneNumber}</span>
+            </div>
+          )}
         </div>
       </Card>
 
@@ -85,7 +97,7 @@ export function RideCard({
             <AlertDialogDescription>
               <p>Would you like to claim a seat for this ride?</p>
               <p className="mt-2 text-sm italic">
-                * By claiming this seat, you are agreeing to split gas with the driver.
+                * By claiming this seat, you are agreeing to split gas with the driver. The driver's contact information will be shown after claiming.
               </p>
             </AlertDialogDescription>
           </AlertDialogHeader>
