@@ -22,7 +22,7 @@ interface RideCardProps {
   endLocation: string;
   availableSeats: number;
   womenOnly: boolean;
-  phoneNumber: string;
+  phoneNumber?: string;
   onSeatClaim: (rideId: number) => void;
 }
 
@@ -33,7 +33,7 @@ export function RideCard({
   endLocation,
   availableSeats,
   womenOnly,
-  phoneNumber,
+  phoneNumber = "",
   onSeatClaim,
 }: RideCardProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -81,7 +81,7 @@ export function RideCard({
             <span>{availableSeats} seats available</span>
           </div>
 
-          {showPhoneNumber && (
+          {showPhoneNumber && phoneNumber && (
             <div className="flex items-center gap-2 text-green-600">
               <Phone className="w-4 h-4" />
               <span>{phoneNumber}</span>

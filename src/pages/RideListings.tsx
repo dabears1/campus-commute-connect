@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { RideCard } from "@/components/RideCard";
@@ -40,6 +41,7 @@ export default function RideListings() {
               endLocation={ride.endLocation}
               availableSeats={ride.availableSeats}
               womenOnly={ride.womenOnly}
+              phoneNumber={ride.phoneNumber}
               onSeatClaim={handleSeatClaim}
             />
           ))}
