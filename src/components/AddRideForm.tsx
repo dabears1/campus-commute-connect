@@ -22,6 +22,7 @@ export interface FormData {
   availableSeats: number;
   womenOnly: boolean;
   phoneNumber: string;
+  passengerCanDrive: boolean;
 }
 
 export function AddRideForm({ open, onOpenChange }: AddRideFormProps) {
@@ -35,6 +36,7 @@ export function AddRideForm({ open, onOpenChange }: AddRideFormProps) {
       availableSeats: 1,
       womenOnly: false,
       phoneNumber: "",
+      passengerCanDrive: false,
     },
   });
 

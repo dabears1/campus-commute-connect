@@ -8,6 +8,7 @@ export interface Ride {
   womenOnly: boolean;
   direction: string;
   phoneNumber?: string;
+  passengerCanDrive: boolean;
 }
 
 export const MOCK_RIDES: Ride[] = [
@@ -19,7 +20,8 @@ export const MOCK_RIDES: Ride[] = [
     availableSeats: 3,
     womenOnly: false,
     direction: "leaving",
-    phoneNumber: "802-555-0123"
+    phoneNumber: "802-555-0123",
+    passengerCanDrive: true
   },
   {
     id: 2,
@@ -29,6 +31,7 @@ export const MOCK_RIDES: Ride[] = [
     availableSeats: 2,
     womenOnly: true,
     direction: "arriving",
-    phoneNumber: "802-555-0456"
+    phoneNumber: "802-555-0456",
+    passengerCanDrive: false
   }
 ];

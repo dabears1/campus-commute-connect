@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Clock, Users, ArrowRight, Phone } from "lucide-react";
+import { MapPin, Clock, Users, ArrowRight, Phone, Wheel } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -23,6 +23,7 @@ interface RideCardProps {
   availableSeats: number;
   womenOnly: boolean;
   phoneNumber?: string;
+  passengerCanDrive: boolean;
   onSeatClaim: (rideId: number) => void;
 }
 
@@ -34,6 +35,7 @@ export function RideCard({
   availableSeats,
   womenOnly,
   phoneNumber = "",
+  passengerCanDrive,
   onSeatClaim,
 }: RideCardProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -62,9 +64,17 @@ export function RideCard({
               <Clock className="w-4 h-4 text-muted-foreground" />
               <span>{departureTime}</span>
             </div>
-            {womenOnly && (
-              <Badge variant="secondary">Women Only</Badge>
-            )}
+            <div className="flex gap-2">
+              {womenOnly && (
+                <Badge variant="secondary">Women Only</Badge>
+              )}
+              {passengerCanDrive && (
+                <Badge variant="outline" className="flex items-center gap-1">
+                  <Wheel className="w-3 h-3" />
+                  Can share driving
+                </Badge>
+              )}
+            </div>
           </div>
           
           <div className="flex items-center gap-2">
