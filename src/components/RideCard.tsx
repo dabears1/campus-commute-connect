@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Clock, Users, ArrowRight, Phone, Steering } from "lucide-react";
+import { MapPin, Clock, Users, ArrowRight, Phone, SteeringWheel } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -70,7 +70,7 @@ export function RideCard({
               )}
               {passengerCanDrive && (
                 <Badge variant="outline" className="flex items-center gap-1">
-                  <Steering className="w-3 h-3" />
+                  <SteeringWheel className="w-3 h-3" />
                   Can share driving
                 </Badge>
               )}
