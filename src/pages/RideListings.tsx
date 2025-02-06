@@ -42,6 +42,7 @@ export default function RideListings() {
               availableSeats={ride.availableSeats}
               womenOnly={ride.womenOnly}
               phoneNumber={ride.phoneNumber}
+              passengerCanDrive={ride.passengerCanDrive}
               onSeatClaim={handleSeatClaim}
             />
           ))}
