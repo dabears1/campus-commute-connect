@@ -6,8 +6,11 @@ import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { InfoIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { PaymentMethod } from "@/lib/types";
+import { PaymentMethod, PricingMechanism, TripPricingType } from "@/lib/types";
 
 interface AddTaxiDriverFormProps {
   open: boolean;
@@ -18,19 +21,25 @@ interface AddTaxiDriverFormProps {
 interface FormData {
   availableLocations: string;
   availableHours: string;
-  pricePerMile: number;
+  pricingMechanism: PricingMechanism;
+  tripPricingType?: TripPricingType;
+  pricePerMile?: number;
+  tripPrice?: number;
   acceptedPayments: PaymentMethod[];
   phoneNumber: string;
 }
 
 const PAYMENT_METHODS: PaymentMethod[] = ["Zelle", "CashApp", "PayPal", "Venmo"];
+const REFERENCE_PRICE_PER_MILE = 1.35; // $50/37 miles (Middlebury to Burlington Airport)
 
 export function AddTaxiDriverForm({ open, onOpenChange, onSubmit }: AddTaxiDriverFormProps) {
   const { toast } = useToast();
+  const [pricingMechanism, setPricingMechanism] = useState<PricingMechanism>("perMile");
   const form = useForm<FormData>({
     defaultValues: {
       availableLocations: "",
       availableHours: "",
+      pricingMechanism: "perMile",
       pricePerMile: 0,
       acceptedPayments: [],
       phoneNumber: "",
@@ -99,26 +108,131 @@ export function AddTaxiDriverForm({ open, onOpenChange, onSubmit }: AddTaxiDrive
 
             <FormField
               control={form.control}
-              name="pricePerMile"
-              rules={{ 
-                required: "Price per mile is required",
-                min: { value: 0, message: "Price must be positive" }
-              }}
+              name="pricingMechanism"
+              rules={{ required: "Pricing mechanism is required" }}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Price per Mile ($)</FormLabel>
+                  <FormLabel>Pricing Mechanism</FormLabel>
                   <FormControl>
-                    <Input 
-                      type="number"
-                      step="0.1"
-                      {...field}
-                      onChange={(e) => field.onChange(parseFloat(e.target.value))}
-                    />
+                    <RadioGroup
+                      value={field.value}
+                      onValueChange={(value: PricingMechanism) => {
+                        field.onChange(value);
+                        setPricingMechanism(value);
+                      }}
+                      className="flex flex-col space-y-2"
+                    >
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="perMile" id="perMile" />
+                        <FormLabel htmlFor="perMile" className="font-normal">
+                          Price per Mile
+                        </FormLabel>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="perTrip" id="perTrip" />
+                        <FormLabel htmlFor="perTrip" className="font-normal">
+                          Fixed Price per Trip
+                        </FormLabel>
+                      </div>
+                    </RadioGroup>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
+
+            {pricingMechanism === "perMile" && (
+              <>
+                <Alert>
+                  <InfoIcon className="h-4 w-4" />
+                  <AlertDescription>
+                    Reference price: ${REFERENCE_PRICE_PER_MILE.toFixed(2)}/mile (based on Middlebury to Burlington Airport)
+                  </AlertDescription>
+                </Alert>
+
+                <FormField
+                  control={form.control}
+                  name="pricePerMile"
+                  rules={{ 
+                    required: "Price per mile is required",
+                    min: { value: 0, message: "Price must be positive" }
+                  }}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Price per Mile ($)</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="number"
+                          step="0.1"
+                          {...field}
+                          onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </>
+            )}
+
+            {pricingMechanism === "perTrip" && (
+              <>
+                <FormField
+                  control={form.control}
+                  name="tripPricingType"
+                  rules={{ required: "Trip pricing type is required" }}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Trip Pricing Type</FormLabel>
+                      <FormControl>
+                        <RadioGroup
+                          value={field.value}
+                          onValueChange={(value: TripPricingType) => field.onChange(value)}
+                          className="flex flex-col space-y-2"
+                        >
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="onePrice" id="onePrice" />
+                            <FormLabel htmlFor="onePrice" className="font-normal">
+                              One Price per Trip
+                            </FormLabel>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="perPerson" id="perPerson" />
+                            <FormLabel htmlFor="perPerson" className="font-normal">
+                              Price per Person
+                            </FormLabel>
+                          </div>
+                        </RadioGroup>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="tripPrice"
+                  rules={{ 
+                    required: "Trip price is required",
+                    min: { value: 0, message: "Price must be positive" }
+                  }}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Trip Price ($)</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="number"
+                          step="0.1"
+                          {...field}
+                          onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </>
+            )}
 
             <FormField
               control={form.control}
