@@ -8,8 +8,11 @@ import { TaxiDriver } from "@/lib/types";
 import { TaxiDriverCard } from "@/components/taxi/TaxiDriverCard";
 import { Button } from "@/components/ui/button";
 import { AddTaxiDriverForm } from "@/components/taxi/AddTaxiDriverForm";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { InfoIcon } from "lucide-react";
 
 const MOCK_TAXI_DRIVERS: TaxiDriver[] = [];
+const REFERENCE_PRICE_PER_MILE = 1.35; // $50/37 miles (Middlebury to Burlington Airport)
 
 export default function RideListings() {
   const { direction } = useParams();
@@ -37,7 +40,12 @@ export default function RideListings() {
       id: Date.now(),
       availableLocations: formData.availableLocations.split(",").map((loc: string) => loc.trim()),
       availableHours: formData.availableHours,
-      pricePerMile: formData.pricePerMile,
+      pricingMechanism: formData.pricingMechanism,
+      ...(formData.pricingMechanism === "perMile" ? { pricePerMile: formData.pricePerMile } : {}),
+      ...(formData.pricingMechanism === "perTrip" ? {
+        tripPricingType: formData.tripPricingType,
+        tripPrice: formData.tripPrice
+      } : {}),
       acceptedPayments: formData.acceptedPayments,
       phoneNumber: formData.phoneNumber,
     };
@@ -78,6 +86,13 @@ export default function RideListings() {
               Add Driver Listing
             </Button>
           </div>
+
+          <Alert className="mb-4">
+            <InfoIcon className="h-4 w-4" />
+            <AlertDescription>
+              Reference price: ${REFERENCE_PRICE_PER_MILE.toFixed(2)}/mile (based on Middlebury to Burlington Airport)
+            </AlertDescription>
+          </Alert>
           
           <div className="space-y-4">
             {taxiDrivers.map((driver) => (

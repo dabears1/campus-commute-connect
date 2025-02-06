@@ -24,7 +24,10 @@ export function TaxiDriverCard({
   id,
   availableLocations,
   availableHours,
+  pricingMechanism,
+  tripPricingType,
   pricePerMile,
+  tripPrice,
   acceptedPayments,
   phoneNumber,
   onContactRequest,
@@ -43,6 +46,19 @@ export function TaxiDriverCard({
     });
   };
 
+  const renderPricing = () => {
+    if (pricingMechanism === "perMile" && pricePerMile) {
+      return `$${pricePerMile}/mile`;
+    } else if (pricingMechanism === "perTrip" && tripPrice) {
+      if (tripPricingType === "onePrice") {
+        return `$${tripPrice}/trip`;
+      } else {
+        return `$${tripPrice}/person/trip`;
+      }
+    }
+    return "Price not specified";
+  };
+
   return (
     <>
       <Card 
@@ -55,7 +71,7 @@ export function TaxiDriverCard({
               <Clock className="w-4 h-4 text-muted-foreground" />
               <span>{availableHours}</span>
             </div>
-            <Badge variant="secondary">${pricePerMile}/mile</Badge>
+            <Badge variant="secondary">{renderPricing()}</Badge>
           </div>
           
           <div className="flex items-center gap-2">
@@ -96,3 +112,4 @@ export function TaxiDriverCard({
     </>
   );
 }
+
