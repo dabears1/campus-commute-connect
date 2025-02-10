@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { RideCard } from "@/components/RideCard";
@@ -60,6 +60,29 @@ export default function RideListings() {
       return data as TaxiDriver[];
     },
   });
+
+  // Set up real-time subscription for rides
+  useEffect(() => {
+    const channel = supabase
+      .channel('schema-db-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',  // Listen to all events (INSERT, UPDATE, DELETE)
+          schema: 'public',
+          table: 'rides'
+        },
+        (payload) => {
+          console.log('Change received!', payload);
+          refetchRides(); // Refetch rides when any change occurs
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [refetchRides]);
   
   const handleSeatClaim = async (rideId: number) => {
     const ride = rides.find(r => r.id === rideId);
@@ -80,7 +103,7 @@ export default function RideListings() {
       return;
     }
 
-    refetchRides();
+    // Note: We don't need to call refetchRides() here anymore as the real-time subscription will handle it
     toast({
       title: "Success",
       description: "Seat claimed successfully!",
