@@ -98,7 +98,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      delete_expired_rides: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
     }
     Enums: {
       payment_method: "Zelle" | "CashApp" | "PayPal" | "Venmo"
