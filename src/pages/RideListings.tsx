@@ -1,55 +1,137 @@
 
 import { useState } from "react";
 import { useParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { RideCard } from "@/components/RideCard";
 import { AddRideButton } from "@/components/AddRideButton";
-import { MOCK_RIDES, Ride } from "@/lib/mock-data";
-import { TaxiDriver } from "@/lib/types";
+import { TaxiDriver, Ride } from "@/lib/types";
 import { TaxiDriverCard } from "@/components/taxi/TaxiDriverCard";
 import { Button } from "@/components/ui/button";
 import { AddTaxiDriverForm } from "@/components/taxi/AddTaxiDriverForm";
-
-const MOCK_TAXI_DRIVERS: TaxiDriver[] = [];
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 export default function RideListings() {
   const { direction } = useParams();
-  const [rides, setRides] = useState<Ride[]>(MOCK_RIDES);
-  const [taxiDrivers, setTaxiDrivers] = useState<TaxiDriver[]>(MOCK_TAXI_DRIVERS);
+  const { toast } = useToast();
   const [isAddDriverFormOpen, setIsAddDriverFormOpen] = useState(false);
   
-  const handleSeatClaim = (rideId: number) => {
-    setRides(currentRides =>
-      currentRides.map(ride =>
-        ride.id === rideId
-          ? { ...ride, availableSeats: ride.availableSeats - 1 }
-          : ride
-      )
-    );
+  const { data: rides = [], refetch: refetchRides } = useQuery({
+    queryKey: ['rides', direction],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('rides')
+        .select('*')
+        .eq('direction', direction)
+        .order('created_at', { ascending: false });
+      
+      if (error) {
+        console.error('Error fetching rides:', error);
+        toast({
+          title: "Error",
+          description: "Failed to load rides. Please try again.",
+          variant: "destructive",
+        });
+        return [];
+      }
+      
+      return data as Ride[];
+    },
+  });
+
+  const { data: taxiDrivers = [], refetch: refetchDrivers } = useQuery({
+    queryKey: ['taxiDrivers'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('taxi_drivers')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (error) {
+        console.error('Error fetching taxi drivers:', error);
+        toast({
+          title: "Error",
+          description: "Failed to load taxi drivers. Please try again.",
+          variant: "destructive",
+        });
+        return [];
+      }
+      
+      return data as TaxiDriver[];
+    },
+  });
+  
+  const handleSeatClaim = async (rideId: number) => {
+    const ride = rides.find(r => r.id === rideId);
+    if (!ride || ride.available_seats <= 0) return;
+
+    const { error } = await supabase
+      .from('rides')
+      .update({ available_seats: ride.available_seats - 1 })
+      .eq('id', rideId);
+
+    if (error) {
+      console.error('Error updating seats:', error);
+      toast({
+        title: "Error",
+        description: "Failed to claim seat. Please try again.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    refetchRides();
+    toast({
+      title: "Success",
+      description: "Seat claimed successfully!",
+    });
   };
 
   const handleContactRequest = (driverId: number) => {
-    // In a real app, this would handle the contact request logic
-    console.log("Contact requested for driver:", driverId);
+    const driver = taxiDrivers.find(d => d.id === driverId);
+    if (driver) {
+      toast({
+        title: "Contact Information",
+        description: `Driver's phone number: ${driver.phone_number}`,
+      });
+    }
   };
 
-  const handleAddDriver = (formData: any) => {
-    const newDriver: TaxiDriver = {
-      id: Date.now(),
-      availableLocations: formData.availableLocations.split(",").map((loc: string) => loc.trim()),
-      availableHours: formData.availableHours,
-      pricingMechanism: formData.pricingMechanism,
-      ...(formData.pricingMechanism === "perMile" ? { pricePerMile: formData.pricePerMile } : {}),
+  const handleAddDriver = async (formData: any) => {
+    const newDriver = {
+      available_locations: formData.availableLocations.split(",").map((loc: string) => loc.trim()),
+      available_hours: formData.availableHours,
+      pricing_mechanism: formData.pricingMechanism,
+      ...(formData.pricingMechanism === "perMile" ? { price_per_mile: formData.pricePerMile } : {}),
       ...(formData.pricingMechanism === "perTrip" ? {
-        tripPricingType: formData.tripPricingType,
-        tripPrice: formData.tripPrice
+        trip_pricing_type: formData.tripPricingType,
+        trip_price: formData.tripPrice
       } : {}),
-      acceptedPayments: formData.acceptedPayments,
-      phoneNumber: formData.phoneNumber,
+      accepted_payments: formData.acceptedPayments,
+      phone_number: formData.phoneNumber,
     };
-    setTaxiDrivers(current => [...current, newDriver]);
+
+    const { error } = await supabase
+      .from('taxi_drivers')
+      .insert([newDriver]);
+
+    if (error) {
+      console.error('Error adding driver:', error);
+      toast({
+        title: "Error",
+        description: "Failed to add driver listing. Please try again.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    refetchDrivers();
+    setIsAddDriverFormOpen(false);
+    toast({
+      title: "Success",
+      description: "Driver listing added successfully!",
+    });
   };
-  
-  const filteredRides = rides.filter(ride => ride.direction === direction);
   
   return (
     <div className="min-h-screen p-4 max-w-2xl mx-auto">
@@ -62,14 +144,14 @@ export default function RideListings() {
         </div>
         
         <div className="space-y-4">
-          {filteredRides.map((ride) => (
+          {rides.map((ride) => (
             <RideCard
               key={ride.id}
               {...ride}
               onSeatClaim={handleSeatClaim}
             />
           ))}
-          {filteredRides.length === 0 && (
+          {rides.length === 0 && (
             <p className="text-center text-muted-foreground py-8">
               No rides available. Be the first to add one!
             </p>

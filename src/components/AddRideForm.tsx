@@ -4,11 +4,13 @@ import { useForm } from "react-hook-form";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { MOCK_RIDES } from "@/lib/mock-data";
 import { DepartureTimeField } from "./form-fields/DepartureTimeField";
 import { LocationFields } from "./form-fields/LocationFields";
 import { RideDetailsFields } from "./form-fields/RideDetailsFields";
 import { PhoneNumberField } from "./form-fields/PhoneNumberField";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import { RideDirection } from "@/lib/types";
 
 interface AddRideFormProps {
   open: boolean;
@@ -28,6 +30,8 @@ export interface FormData {
 export function AddRideForm({ open, onOpenChange }: AddRideFormProps) {
   const { direction } = useParams();
   const navigate = useNavigate();
+  const { toast } = useToast();
+  
   const form = useForm<FormData>({
     defaultValues: {
       departureTime: "",
@@ -40,14 +44,37 @@ export function AddRideForm({ open, onOpenChange }: AddRideFormProps) {
     },
   });
 
-  const onSubmit = (data: FormData) => {
+  const onSubmit = async (data: FormData) => {
     const newRide = {
-      id: Date.now(),
-      ...data,
-      direction,
+      departure_time: new Date(data.departureTime).toISOString(),
+      start_location: data.startLocation,
+      end_location: data.endLocation,
+      available_seats: data.availableSeats,
+      women_only: data.womenOnly,
+      phone_number: data.phoneNumber,
+      passenger_can_drive: data.passengerCanDrive,
+      direction: direction as RideDirection,
     };
     
-    MOCK_RIDES.push(newRide);
+    const { error } = await supabase
+      .from('rides')
+      .insert([newRide]);
+
+    if (error) {
+      console.error('Error adding ride:', error);
+      toast({
+        title: "Error",
+        description: "Failed to add ride. Please try again.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    toast({
+      title: "Success",
+      description: "Ride added successfully!",
+    });
+    
     onOpenChange(false);
     navigate(`/rides/${direction}`);
   };

@@ -9,7 +9,90 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      rides: {
+        Row: {
+          available_seats: number
+          created_at: string
+          departure_time: string
+          direction: Database["public"]["Enums"]["ride_direction"]
+          end_location: string
+          id: number
+          passenger_can_drive: boolean
+          phone_number: string
+          start_location: string
+          women_only: boolean
+        }
+        Insert: {
+          available_seats: number
+          created_at?: string
+          departure_time: string
+          direction: Database["public"]["Enums"]["ride_direction"]
+          end_location: string
+          id?: number
+          passenger_can_drive?: boolean
+          phone_number: string
+          start_location: string
+          women_only?: boolean
+        }
+        Update: {
+          available_seats?: number
+          created_at?: string
+          departure_time?: string
+          direction?: Database["public"]["Enums"]["ride_direction"]
+          end_location?: string
+          id?: number
+          passenger_can_drive?: boolean
+          phone_number?: string
+          start_location?: string
+          women_only?: boolean
+        }
+        Relationships: []
+      }
+      taxi_drivers: {
+        Row: {
+          accepted_payments: Database["public"]["Enums"]["payment_method"][]
+          available_hours: string
+          available_locations: string[]
+          created_at: string
+          id: number
+          phone_number: string
+          price_per_mile: number | null
+          pricing_mechanism: Database["public"]["Enums"]["pricing_mechanism"]
+          trip_price: number | null
+          trip_pricing_type:
+            | Database["public"]["Enums"]["trip_pricing_type"]
+            | null
+        }
+        Insert: {
+          accepted_payments: Database["public"]["Enums"]["payment_method"][]
+          available_hours: string
+          available_locations: string[]
+          created_at?: string
+          id?: number
+          phone_number: string
+          price_per_mile?: number | null
+          pricing_mechanism: Database["public"]["Enums"]["pricing_mechanism"]
+          trip_price?: number | null
+          trip_pricing_type?:
+            | Database["public"]["Enums"]["trip_pricing_type"]
+            | null
+        }
+        Update: {
+          accepted_payments?: Database["public"]["Enums"]["payment_method"][]
+          available_hours?: string
+          available_locations?: string[]
+          created_at?: string
+          id?: number
+          phone_number?: string
+          price_per_mile?: number | null
+          pricing_mechanism?: Database["public"]["Enums"]["pricing_mechanism"]
+          trip_price?: number | null
+          trip_pricing_type?:
+            | Database["public"]["Enums"]["trip_pricing_type"]
+            | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -18,7 +101,10 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      payment_method: "Zelle" | "CashApp" | "PayPal" | "Venmo"
+      pricing_mechanism: "perMile" | "perTrip"
+      ride_direction: "leaving" | "arriving"
+      trip_pricing_type: "onePrice" | "perPerson"
     }
     CompositeTypes: {
       [_ in never]: never
