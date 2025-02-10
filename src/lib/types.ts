@@ -29,3 +29,20 @@ export interface Ride {
   passenger_can_drive: boolean;
   direction: RideDirection;
 }
+
+// Props interfaces
+export interface RideCardProps {
+  id: number;
+  departureTime: string;
+  startLocation: string;
+  endLocation: string;
+  availableSeats: number;
+  womenOnly: boolean;
+  phoneNumber: string;
+  passengerCanDrive: boolean;
+  onSeatClaim: (rideId: number) => void;
+}
+
+export interface TaxiDriverCardProps extends TaxiDriver {
+  onContactRequest: (driverId: number) => void;
+}

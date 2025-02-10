@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { RideCard } from "@/components/RideCard";
 import { AddRideButton } from "@/components/AddRideButton";
-import { TaxiDriver, Ride } from "@/lib/types";
+import { TaxiDriver, Ride, RideDirection } from "@/lib/types";
 import { TaxiDriverCard } from "@/components/taxi/TaxiDriverCard";
 import { Button } from "@/components/ui/button";
 import { AddTaxiDriverForm } from "@/components/taxi/AddTaxiDriverForm";
@@ -12,7 +12,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
 export default function RideListings() {
-  const { direction } = useParams();
+  const { direction } = useParams<{ direction: RideDirection }>();
   const { toast } = useToast();
   const [isAddDriverFormOpen, setIsAddDriverFormOpen] = useState(false);
   
@@ -147,7 +147,14 @@ export default function RideListings() {
           {rides.map((ride) => (
             <RideCard
               key={ride.id}
-              {...ride}
+              id={ride.id}
+              departureTime={ride.departure_time}
+              startLocation={ride.start_location}
+              endLocation={ride.end_location}
+              availableSeats={ride.available_seats}
+              womenOnly={ride.women_only}
+              phoneNumber={ride.phone_number}
+              passengerCanDrive={ride.passenger_can_drive}
               onSeatClaim={handleSeatClaim}
             />
           ))}
