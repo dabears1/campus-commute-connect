@@ -14,22 +14,18 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
-import { TaxiDriver } from "@/lib/types";
-
-interface TaxiDriverCardProps extends TaxiDriver {
-  onContactRequest: (driverId: number) => void;
-}
+import { TaxiDriverCardProps } from "@/lib/types";
 
 export function TaxiDriverCard({
   id,
-  availableLocations,
-  availableHours,
-  pricingMechanism,
-  tripPricingType,
-  pricePerMile,
-  tripPrice,
-  acceptedPayments,
-  phoneNumber,
+  available_locations,
+  available_hours,
+  pricing_mechanism,
+  trip_pricing_type,
+  price_per_mile,
+  trip_price,
+  accepted_payments,
+  phone_number,
   onContactRequest,
 }: TaxiDriverCardProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -47,13 +43,13 @@ export function TaxiDriverCard({
   };
 
   const renderPricing = () => {
-    if (pricingMechanism === "perMile" && pricePerMile) {
-      return `$${pricePerMile}/mile`;
-    } else if (pricingMechanism === "perTrip" && tripPrice) {
-      if (tripPricingType === "onePrice") {
-        return `$${tripPrice}/trip`;
+    if (pricing_mechanism === "perMile" && price_per_mile) {
+      return `$${price_per_mile}/mile`;
+    } else if (pricing_mechanism === "perTrip" && trip_price) {
+      if (trip_pricing_type === "onePrice") {
+        return `$${trip_price}/trip`;
       } else {
-        return `$${tripPrice}/person/trip`;
+        return `$${trip_price}/person/trip`;
       }
     }
     return "Price not specified";
@@ -69,25 +65,25 @@ export function TaxiDriverCard({
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Clock className="w-4 h-4 text-muted-foreground" />
-              <span>{availableHours}</span>
+              <span>{available_hours}</span>
             </div>
             <Badge variant="secondary">{renderPricing()}</Badge>
           </div>
           
           <div className="flex items-center gap-2">
             <MapPin className="w-4 h-4 text-muted-foreground" />
-            <span>{availableLocations.join(", ")}</span>
+            <span>{available_locations.join(", ")}</span>
           </div>
 
           <div className="flex items-center gap-2">
             <DollarSign className="w-4 h-4 text-muted-foreground" />
-            <span>Accepts: {acceptedPayments.join(", ")}</span>
+            <span>Accepts: {accepted_payments.join(", ")}</span>
           </div>
 
           {showPhoneNumber && (
             <div className="flex items-center gap-2 text-green-600">
               <Phone className="w-4 h-4" />
-              <span>{phoneNumber}</span>
+              <span>{phone_number}</span>
             </div>
           )}
         </div>
@@ -112,4 +108,3 @@ export function TaxiDriverCard({
     </>
   );
 }
-

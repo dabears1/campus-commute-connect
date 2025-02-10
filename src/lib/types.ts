@@ -43,6 +43,16 @@ export interface RideCardProps {
   onSeatClaim: (rideId: number) => void;
 }
 
-export interface TaxiDriverCardProps extends TaxiDriver {
+export interface TaxiDriverCardProps {
+  id: number;
+  created_at: string;
+  available_locations: string[];
+  available_hours: string;
+  pricing_mechanism: PricingMechanism;
+  trip_pricing_type?: TripPricingType;
+  price_per_mile?: number;
+  trip_price?: number;
+  accepted_payments: PaymentMethod[];
+  phone_number: string;
   onContactRequest: (driverId: number) => void;
 }
